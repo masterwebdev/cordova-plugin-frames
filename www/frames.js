@@ -1,4 +1,4 @@
-cordova.define("com.autoitalsinc.frames.frames", function(require, exports, module) {
+cordova.define("com.autovitalsinc.frames.frames", function(require, exports, module) {
 /*global cordova, module*/
 
 module.exports = {
