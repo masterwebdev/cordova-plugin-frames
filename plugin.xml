@@ -8,6 +8,10 @@
   <engines>
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
+  
+  <js-module src="www/frames.js" name="frames">
+    <clobbers target="frames" />
+  </js-module>
 
   <platform name="ios">
     
