@@ -18,6 +18,7 @@
     <config-file target="config.xml" parent="/widget">
       <feature name="Frames">
         <param name="ios-package" value="AVFrames" />
+        <param name="onload" value="true"/>
       </feature>
     </config-file>
 
