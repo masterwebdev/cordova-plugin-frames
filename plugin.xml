@@ -9,8 +9,6 @@
     <engine name="cordova" version=">=3.4.0"/>
   </engines>
 
-  <asset src="www/frames.js" target="js/frames.js"/>
-
   <js-module src="www/frames.js" name="frames">
     <clobbers target="frames" />
   </js-module>
