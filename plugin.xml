@@ -29,9 +29,6 @@
   
     <!-- android -->
     <platform name="android">
-      <js-module src="www/frames.js" name="frames">
-        <runs/>
-
         <!-- This is the window variable name you want, like window.MyCordovaPlugin -->
         <clobbers target="Frames" />
       </js-module>
