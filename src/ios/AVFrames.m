@@ -29,30 +29,100 @@
     NSString* path = [command.arguments objectAtIndex:0];
     NSString* position = [command.arguments objectAtIndex:1];
     
+    int pos=[position intValue];
+    
     
     NSLog(@"PATHHHHHHHHHHH: %@", path);
     
-    NSURL *url = [NSURL URLWithString:path];
     
-    AVAsset *asset = [AVAsset assetWithURL:url];
-    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc]initWithAsset:asset];
-    CMTime time = [asset duration];
-    time.value = 1 ;
-    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:time actualTime:NULL error:NULL];
-    UIImage *image1 = [UIImage imageWithCGImage:imageRef];
     
-    NSData *imageData = UIImageJPEGRepresentation(image1, 1.0);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    NSLog(@"%@", imageData);
+    if ([fileManager fileExistsAtPath:path]){
+        NSLog(@"EEeEEEEXXXXXXXXIIIIIISSSSSTTTTTSSS: %@", path);
+    }
     
-    NSString *base64String = [imageData base64EncodedStringWithOptions:0];
-    NSLog(@"BASE64: %@", base64String);
     
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK
-                               messageAsString:base64String];
     
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    
+    NSLog(@"QQQQQQQQQQQQQQQQQ: %d", pos);
+    
+    
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:url options:nil];
+    //[AVURLAsset URLAssetWithURL:[NSURL fileURLWithPath:path] options:nil];
+    AVAssetImageGenerator *generateImg = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    NSError *error = NULL;
+    CMTime time = CMTimeMake(pos, 1000);
+    CGImageRef refImg = [generateImg copyCGImageAtTime:time actualTime:NULL error:&error];
+    NSLog(@"error==%@, Refimage==%@", error, refImg);
+    
+    UIImage *FrameImage= [[UIImage alloc] initWithCGImage:refImg];
+    
+    UIImage *thumb = [self compressImage:FrameImage];
+    
+            
+            NSLog(@"3");
+            
+            NSData *imageData = UIImageJPEGRepresentation(thumb, 1.0);
+            
+            //NSLog(@"%@", imageData);
+            
+            NSString *base64String = [imageData base64EncodedStringWithOptions:0];
+            //NSLog(@"BASE64: %@", base64String);
+            
+            CDVPluginResult* result = [CDVPluginResult
+                                       resultWithStatus:CDVCommandStatus_OK
+                                       messageAsString:base64String];
+            
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    
+    
+}
+
+
+-(UIImage *)compressImage:(UIImage *)image{
+    
+    NSData *imgData = UIImageJPEGRepresentation(image, 1); //1 it represents the quality of the image.
+    NSLog(@"Size of Image(bytes):%ld",(unsigned long)[imgData length]);
+    
+    float actualHeight = image.size.height;
+    float actualWidth = image.size.width;
+    float maxHeight = 115.0;
+    float maxWidth = 204.0;
+    float imgRatio = actualWidth/actualHeight;
+    float maxRatio = maxWidth/maxHeight;
+    float compressionQuality = 0.5;//50 percent compression
+    
+    if (actualHeight > maxHeight || actualWidth > maxWidth){
+        if(imgRatio < maxRatio){
+            //adjust width according to maxHeight
+            imgRatio = maxHeight / actualHeight;
+            actualWidth = imgRatio * actualWidth;
+            actualHeight = maxHeight;
+        }
+        else if(imgRatio > maxRatio){
+            //adjust height according to maxWidth
+            imgRatio = maxWidth / actualWidth;
+            actualHeight = imgRatio * actualHeight;
+            actualWidth = maxWidth;
+        }
+        else{
+            actualHeight = maxHeight;
+            actualWidth = maxWidth;
+        }
+    }
+    
+    CGRect rect = CGRectMake(0.0, 0.0, actualWidth, actualHeight);
+    UIGraphicsBeginImageContext(rect.size);
+    [image drawInRect:rect];
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    NSData *imageData = UIImageJPEGRepresentation(img, compressionQuality);
+    UIGraphicsEndImageContext();
+    
+    NSLog(@"Size of Image(bytes):%ld",(unsigned long)[imageData length]);
+    
+    return [UIImage imageWithData:imageData];
 }
 
 @end
