@@ -63,7 +63,7 @@ int fcnt;
     
     AVAssetImageGeneratorCompletionHandler handler = ^(CMTime requestedTime, CGImageRef im, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error){
         fcnt=fcnt+1;
-        NSLog(@"FRAMES CNT %d", fcnt);
+        NSLog(@"Frames count %d", fcnt);
         
         if (result != AVAssetImageGeneratorSucceeded) {
             NSLog(@"couldn't generate thumbnail, error:%@", error);
@@ -111,7 +111,7 @@ int fcnt;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     if ([fileManager fileExistsAtPath:path]){
-        NSLog(@"EEeEEEEXXXXXXXXIIIIIISSSSSTTTTTSSS: %@", path);
+        NSLog(@"Exists: %@", path);
     }
     
     NSURL *url = [NSURL fileURLWithPath:path];
@@ -180,21 +180,21 @@ int fcnt;
     int pos=[position intValue];
     
     
-    NSLog(@"PATHHHHHHHHHHH: %@", path);
+    NSLog(@"Path: %@", path);
     
     
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     if ([fileManager fileExistsAtPath:path]){
-        NSLog(@"EEeEEEEXXXXXXXXIIIIIISSSSSTTTTTSSS: %@", path);
+        NSLog(@"Exists: %@", path);
     }
     
     
     
     NSURL *url = [NSURL fileURLWithPath:path];
     
-    NSLog(@"QQQQQQQQQQQQQQQQQ: %d", pos);
+    NSLog(@"Position: %d", pos);
     
     
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:url options:nil];
@@ -210,9 +210,6 @@ int fcnt;
     CFRelease(refImg);
     
     UIImage *thumb = [self compressImage:FrameImage];
-    
-            
-            NSLog(@"3");
             
             NSData *imageData = UIImageJPEGRepresentation(thumb, 1.0);
             
